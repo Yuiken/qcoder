@@ -1,43 +1,43 @@
 context("Parse coded documents")
 
 data_path <-  "data/"
-doctxt1 <- readr::read_file(paste0(data_path, "CoC_Example1_MU_nestingcheck.txt"))
-doctxt2 <- readr::read_file(paste0(data_path, "CoC_Example2_MU.txt"))
+#data_path <-  "tests/testthat/data/"
+doctxt1 <- readr::read_file(paste0(data_path, "CoC_Example2_MU.txt"))
+doctxt2 <- readr::read_file(paste0(data_path, "CoC_Example1_MU_nestingcheck.txt"))
 doctxt3 <- readr::read_file(paste0(data_path, "CoC_Example3_MU.txt"))
 doctxt4 <- readr::read_file(paste0(data_path, "CoC_Example2_MU_unbalanced_tags.txt"))
 doctxt5 <- readr::read_file(paste0(data_path, "CoC_Example2_MU_missing_close_curly.txt"))
 doctxt6 <- readr::read_file(paste0(data_path, "CoC_Example2_MU_missinghashtag.txt"))
 doctxt7 <- readr::read_file(paste0(data_path, "CoC_Example1_MU_nestingcheck2.txt"))
 doctxt8 <- readr::read_file(paste0(data_path, "CoC_Example1_MU_nestingcheck3.txt"))
+doctxt9 <- readr::read_file(paste0(data_path, "CoC_Example2_MU_open_tag_at_start.txt"))
+doctxt10 <- readr::read_file(paste0(data_path, "CoC_Example1_MU_nestingcheck4.txt"))
 
-test_that("error_check passes a correct document without nested codes.", {
-  expect_null(error_check(doctxt2))
+
+single_docs <- list(doctxt1, doctxt2, doctxt3, doctxt4,
+                    doctxt5, doctxt6, doctxt7,
+                    doctxt8, doctxt9, doctxt10)
+
+data_message <- c(
+  "error_check passes a correct document without nested codes.",
+  "error_check passes a correct document with nested codes.",
+  "error_check handles a document with no codes.",
+  "error_check returns warnings for unmatched QCODE tags.",
+  "error_check returns warnings for missing }.",
+  "error_check returns warnings for missing #.",
+  "error_check passes a correct document with qcodes in separate {}.",
+  "error_check passes a correct document with qcode twice around same text.",
+  "error_check handles a document with a tag at the start",
+  "error_check handles a document with three codes on one text"
+  )
+
+test_that("error_check works in various cases", {
+  for (i in 1:10){
+    print(paste0("Test that ", data_message[i]))
+    expect_null(error_check(single_docs[[i]]))
+  }
 })
 
-test_that("error_check passes a correct document with nested codes.", {
-  expect_null(error_check(doctxt1))
-  expect_null(error_check(doctxt7))
-  expect_null(error_check(doctxt8))
-})
-
-test_that("error_check handles a document with no codes.",  {
-
-  expect_null(error_check(doctxt3))
-})
-
-test_that("error_check returns warnings for unmatched QCODE tags.", {
-  expect_warning(error_check(doctxt4))
-
-})
-
-test_that("error_check returns warnings for missing #.", {
-  expect_warning(error_check(doctxt6))
-
-})
-test_that("error_check returns warnings for missing }.", {
-  expect_warning(error_check(doctxt5))
-
-})
 
 test_that("discovered codes are added to the existing codes data frame correctly", {
 
